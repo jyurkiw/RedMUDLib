@@ -123,4 +123,4 @@ function NodeMUDServer() {
     }
 }
 
-module.exports = NodeMUDServer();
+module.exports = NodeMUDServer;
