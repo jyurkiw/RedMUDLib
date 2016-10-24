@@ -3,12 +3,12 @@ var expect = chai.expect;
 var assert = require('assert');
 
 var redis = require('redis');
-var constants = require('../serverconstants');
-var codeutil = require('../codeutil');
+var constants = require('../lib/constants');
+var codeutil = require('../lib/util/codeutil');
 
 var client = redis.createClient();
 
-var lib = require('../lib/mud-lib')(client, constants, codeutil);
+var lib = require('../lib/mud-lib')(client);
 
 var testArea = {
     areacode: "KDV",
