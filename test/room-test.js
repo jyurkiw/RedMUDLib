@@ -47,7 +47,7 @@ var goblinCaveTunnel = {
 
 var westernOverlookUpdate = {
     name: 'Western Overlook',
-    description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do. A hole in the wester rockface opens into a dark cave that reeks of Goblin.'
+    description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do. A hole in the western rockface opens into a dark cave that reeks of Goblin.'
 };
 
 var westernOverlookUpdated = {
@@ -119,7 +119,16 @@ describe('The room-lib module', function() {
 
     // U
     describe('Update room data', function() {
+        it('Update the western overlook', function(done) {
+            westernOverlookUpdated.roomnumber = westernOverlook.roomnumber;
 
+            lib.setRoom(westernOverlook.areacode, westernOverlook.roomnumber, westernOverlookUpdate, function() {
+                lib.getRoom(westernOverlook.areacode, westernOverlook.roomnumber, function(roomData) {
+                    expect(roomData).to.deep.equal(westernOverlookUpdated);
+                    done();
+                });
+            });
+        });
     });
 
     // D
