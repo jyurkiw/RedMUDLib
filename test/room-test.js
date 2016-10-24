@@ -150,6 +150,36 @@ describe('The room-lib module', function() {
                 });
             });
         });
+
+        it('Connect the western overlook to the goblin cave entrance', function(done) {
+            lib.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+
+            should.not.exist(westernOverlook.exits);
+            should.not.exist(goblinCaveEntrance.exits);
+
+            var wolExit = {
+                source: westernOverlook,
+                command: 'west'
+            };
+
+            var gcvExit = {
+                source: goblinCaveEntrance,
+                command: 'east'
+            };
+
+            lib.connectRooms(wolExit, gcvExit, function() {
+                var wolCode = codeutil.buildRoomExitsCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                var gcvCode = codeutil.buildRoomExitsCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+
+                client.hget(wolCode, wolExit.command, function(werr, wres) {
+                    expect(wres).to.equal(codeutil.convertRoomToExitsCode(gcvCode));
+                    client.hget(gcvCode, gcvExit.command, function(gerr, gres) {
+                        expect(gres).to.equal(codeutil.convertRoomToExitsCode(wolCode));
+                        done();
+                    });
+                });
+            })
+        });
     });
 
     // D
