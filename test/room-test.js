@@ -24,7 +24,7 @@ var goblinValleyArea = {
     size: 0
 };
 
-var testRoomAdd = {
+var westernOverlookAdd = {
     areacode: koboldValleyArea.areacode,
     name: 'Western Overlook',
     description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do.'
@@ -37,7 +37,7 @@ var westernOverlook = {
     description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do.'
 };
 
-var newRoom = {
+var goblinCaveEntranceAdd = {
     areacode: goblinValleyArea.areacode,
     name: 'Cave Entrance',
     description: 'The opening to this dank cave reeks of Goblin.'
@@ -50,7 +50,7 @@ var goblinCaveEntrance = {
     description: 'The opening to this dank cave reeks of Goblin.'
 }
 
-var newRoom2 = {
+var goblinCaveTunnelAdd = {
     areacode: goblinValleyArea.areacode,
     name: 'Narrow Corridor',
     description: 'The cave stretches on into the darkness. '
@@ -63,12 +63,12 @@ var goblinCaveTunnel = {
     description: 'The cave stretches on into the darkness. '
 }
 
-var testRoomUpdate = {
+var westernOverlookUpdate = {
     name: 'Western Overlook',
     description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do. A hole in the wester rockface opens into a dark cave that reeks of Goblin.'
 };
 
-var testRoomUpdated = {
+var westernOverlookUpdated = {
     areacode: 'KDV',
     roomnumber: 1,
     name: 'Western Overlook',
@@ -80,7 +80,7 @@ beforeEach(function(done) {
     client.flushall();
     lib.setArea(koboldValleyArea.areacode, koboldValleyArea);
     lib.setArea(goblinValleyArea.areacode, goblinValleyArea);
-    lib.addRoom(koboldValleyArea.areacode, testRoomAdd);
+    lib.addRoom(koboldValleyArea.areacode, westernOverlookAdd);
     done();
 });
 
@@ -94,7 +94,7 @@ describe('The room-lib module', function() {
     // C
     describe('Create a new room without exits', function() {
         it('Checks setting of all data pieces with basic area code', function(done) {
-            lib.addRoom(newRoom.areacode, newRoom, function(fullRoomData, newRoomNumber) {
+            lib.addRoom(goblinCaveEntranceAdd.areacode, goblinCaveEntranceAdd, function(fullRoomData, newRoomNumber) {
                 expect(newRoomNumber).to.equal(goblinCaveEntrance.roomnumber);
                 expect(fullRoomData).to.deep.equal(goblinCaveEntrance);
                 done();
@@ -102,9 +102,9 @@ describe('The room-lib module', function() {
         });
 
         it('Checks setting of all data pieces with area key', function(done) {
-            var areaCode = codeutil.buildAreaCode(newRoom.areacode, newRoom);
+            var areaCode = codeutil.buildAreaCode(goblinCaveEntranceAdd.areacode, goblinCaveEntranceAdd);
 
-            lib.addRoom(areaCode, newRoom, function(fullRoomData, newRoomNumber) {
+            lib.addRoom(areaCode, goblinCaveEntranceAdd, function(fullRoomData, newRoomNumber) {
                 expect(newRoomNumber).to.equal(goblinCaveEntrance.roomnumber);
                 expect(fullRoomData).to.deep.equal(goblinCaveEntrance);
                 done();
@@ -113,8 +113,13 @@ describe('The room-lib module', function() {
     });
 
     // R
-    describe('Read a room', function() {
-
+    describe('Read rooms', function() {
+        it('Get the western overlook', function(done) {
+            lib.getRoom(westernOverlook.areacode, westernOverlook.roomnumber, function(room) {
+                expect(room).to.deep.equal(westernOverlook);
+                done();
+            });
+        });
     });
 
     // U
