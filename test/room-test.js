@@ -133,7 +133,32 @@ describe('The room-lib module', function() {
 
     // D
     describe('Delete a room', function() {
+        it('Delete the western overlook and the kobold valley', function(done) {
+            lib.deleteRoom(westernOverlook.areacode, westernOverlook.roomnumber, function(delResponse) {
+                expect(delResponse).to.be.a('object');
+                expect(delResponse.code).to.equal(constants.AREA_DELETED);
 
+                lib.getRoom(westernOverlook.areacode, westernOverlook.roomnumber, function(roomData) {
+                    expect(roomData).to.equal(null);
+
+                    lib.getArea(westernOverlook.areacode, function(area) {
+                        expect(area).to.equal(null);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('Delete one out of two rooms in the goblin cave', function(done) {
+            lib.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+            lib.addRoom(goblinCaveTunnel.areacode, goblinCaveTunnel);
+
+            lib.deleteRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber, function(delResponse) {
+                expect(delResponse).to.be.a('object');
+                expect(delResponse.code).to.equal(constants.OK);
+                done();
+            });
+        });
     });
 
 });
