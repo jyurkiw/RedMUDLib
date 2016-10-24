@@ -38,20 +38,20 @@ var testAreaUpdated = {
 
 var hashKey = codeutil.buildCode(constants.AREAS_KEY, testArea.areacode);
 
-// Setup
-beforeEach(function(done) {
-    client.flushall();
-    lib.setArea(testArea.areacode, testArea);
-    done();
-});
-
-after(function(done) {
-    client.flushall();
-    done();
-});
-
 // Tests
 describe('The area-lib module', function() {
+    // Setup
+    beforeEach(function(done) {
+        client.flushall();
+        lib.setArea(testArea.areacode, testArea);
+        done();
+    });
+
+    after(function(done) {
+        client.flushall();
+        done();
+    });
+
     // C
     describe('Create a new area', function() {
         it('Checks setting of both data pieces', function(done) {
