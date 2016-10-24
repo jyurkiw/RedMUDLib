@@ -139,13 +139,14 @@ describe('The room-lib module', function() {
 
             var exitDir = 'west';
 
-            lib.addConnection(exitDir, westernOverlook, goblinCaveEntrance, function() {
+            lib.setConnection(exitDir, westernOverlook, goblinCaveEntrance, function() {
                 var roomCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
                 var roomExitsCode = codeutil.convertRoomToExitsCode(roomCode);
                 var destinationCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
 
                 client.hgetall(roomExitsCode, function(err, res) {
                     expect(res[exitDir]).to.equal(destinationCode);
+                    done();
                 });
             });
         });
