@@ -1,5 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
+var should = chai.should();
 var assert = require('assert');
 
 var redis = require('redis');
@@ -104,7 +105,7 @@ describe('The room-lib module', function() {
                     done();
                 });
             });
-        })
+        });
     });
 
     // R
@@ -126,6 +127,25 @@ describe('The room-lib module', function() {
                 lib.getRoom(westernOverlook.areacode, westernOverlook.roomnumber, function(roomData) {
                     expect(roomData).to.deep.equal(westernOverlookUpdated);
                     done();
+                });
+            });
+        });
+
+        it('Add an exit from western overlook to goblin cave entrance', function(done) {
+            lib.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+
+            should.not.exist(westernOverlook.exits);
+            should.not.exist(goblinCaveEntrance.exits);
+
+            var exitDir = 'west';
+
+            lib.addConnection(exitDir, westernOverlook, goblinCaveEntrance, function() {
+                var roomCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                var roomExitsCode = codeutil.convertRoomToExitsCode(roomCode);
+                var destinationCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+
+                client.hgetall(roomExitsCode, function(err, res) {
+                    expect(res[exitDir]).to.equal(destinationCode);
                 });
             });
         });
@@ -160,5 +180,4 @@ describe('The room-lib module', function() {
             });
         });
     });
-
 });
