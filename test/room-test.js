@@ -168,13 +168,15 @@ describe('The room-lib module', function() {
             };
 
             lib.connectRooms(wolExit, gcvExit, function() {
-                var wolCode = codeutil.buildRoomExitsCode(westernOverlook.areacode, westernOverlook.roomnumber);
-                var gcvCode = codeutil.buildRoomExitsCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+                var wolCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                var wolECode = codeutil.convertRoomToExitsCode(wolCode);
+                var gcvCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+                var gcvECode = codeutil.convertRoomToExitsCode(gcvCode);
 
-                client.hget(wolCode, wolExit.command, function(werr, wres) {
-                    expect(wres).to.equal(codeutil.convertRoomToExitsCode(gcvCode));
-                    client.hget(gcvCode, gcvExit.command, function(gerr, gres) {
-                        expect(gres).to.equal(codeutil.convertRoomToExitsCode(wolCode));
+                client.hget(wolECode, wolExit.command, function(werr, wres) {
+                    expect(wres).to.equal(gcvCode);
+                    client.hget(gcvECode, gcvExit.command, function(gerr, gres) {
+                        expect(gres).to.equal(wolCode);
                         done();
                     });
                 });
