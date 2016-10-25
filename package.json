@@ -1,6 +1,6 @@
 {
     "name": "nodemudserver",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A MUD server written in NodeJS with a Redis backend.",
     "main": "server.js",
     "repository": {
