@@ -134,6 +134,8 @@ describe('The room-lib module', function() {
                     should.exist(roomData.exits);
                     expect(roomData.exits).to.be.a('object');
                     expect(roomData.exits[exitDir]).to.equal(destinationCode);
+
+                    done();
                 });
             });
         });
