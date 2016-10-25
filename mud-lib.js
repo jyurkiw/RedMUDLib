@@ -6,10 +6,10 @@
  * @param {any} codeutil
  * @returns
  */
-function MUDLib(client, constants, codeutil) {
+function MUDLib(client) {
     var libs = [];
-    libs.push(require('./area/area-lib')(client));
-    libs.push(require('./room/room-lib')(client));
+    libs.push(require('./lib/area/area-lib')(client));
+    libs.push(require('./lib/room/room-lib')(client));
 
     var mudLib = {};
 

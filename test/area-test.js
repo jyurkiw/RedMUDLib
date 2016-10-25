@@ -8,7 +8,7 @@ var codeutil = require('../lib/util/codeutil');
 
 var client = redis.createClient();
 
-var lib = require('../lib/mud-lib')(client);
+var lib = require('../mud-lib')(client);
 
 var testArea = {
     areacode: "KDV",
