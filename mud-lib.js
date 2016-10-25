@@ -1,10 +1,8 @@
 /**
+ * A library for interfacing with the RedMUD's Redis backend.
  * 
- * 
- * @param {any} client
- * @param {any} constants
- * @param {any} codeutil
- * @returns
+ * @param {any} client The client object used by the library instance.
+ * @returns A function-access object.
  */
 function MUDLib(client) {
     var libs = [];
