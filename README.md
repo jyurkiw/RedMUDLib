@@ -1,2 +1,2 @@
-# RedMUDLib
-Library used to access the RedMUD backend.
+# RedMUD Library
+Library used to interface with the RedMUD Redis backend.
