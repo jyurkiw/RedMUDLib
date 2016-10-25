@@ -1,11 +1,11 @@
 {
-    "name": "nodemudserver",
+    "name": "redmudlib",
     "version": "0.0.2",
-    "description": "A MUD server written in NodeJS with a Redis backend.",
+    "description": "A MUD Redis-access library written in NodeJS.",
     "main": "mud-lib.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jyurkiw/NodeMudServer.git"
+        "url": "https://github.com/jyurkiw/RedMUDLib.git"
     },
     "scripts": {
         "test": "./node_modules/.bin/mocha --reporter spec",
