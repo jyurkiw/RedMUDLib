@@ -1,2 +1,2 @@
-# NodeMudServer
-Server used to run a MUD. Written in JavaScript using Node JS, and a Redis backend.
+# RedMUD Library
+Library used to interface with the RedMUD Redis backend.

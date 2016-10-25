@@ -38,3 +38,6 @@ jspm_packages
 
 # JSDoc directory
 docs
+
+# Wiki output directory
+api.md
