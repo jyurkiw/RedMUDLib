@@ -99,6 +99,17 @@ describe('The area-lib module', function() {
                 done();
             });
         });
+
+        it('Read data for area with size > 0 and verify size', function(done) {
+            var areaKey = codeutil.buildAreaCode(testArea.areacode);
+
+            client.hincrby(areaKey, 'size', 5, function(herr, hres) {
+                lib.getArea(testArea.areacode, function(res) {
+                    expect(res.size).to.equal(5);
+                    done();
+                });
+            });
+        });
     });
 
     describe('Check area exists', function() {
