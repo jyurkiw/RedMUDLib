@@ -101,6 +101,22 @@ describe('The area-lib module', function() {
         });
     });
 
+    describe('Check area exists', function() {
+        it('Area does exist.', function(done) {
+            lib.areaExists(testArea.areacode, function(exists) {
+                assert(exists);
+                done();
+            });
+        });
+
+        it('Area does not exist.', function(done) {
+            lib.areaExists('XXX', function(exists) {
+                assert(!exists);
+                done();
+            });
+        });
+    });
+
     // U
     describe('Update one area', function() {
         it('Update data for one area.', function(done) {
