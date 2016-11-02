@@ -24,6 +24,12 @@ var testArea2 = {
     size: 0
 };
 
+var testArea3 = {
+    areacode: "GCV",
+    name: "Goblin Cave",
+    description: "A cave filled with goblins."
+};
+
 var testAreaUpdate = {
     name: "Kobold Death Valley",
     description: "A hot, dry valley filled with undead Kobolds."
@@ -72,6 +78,17 @@ describe('The area-lib module', function() {
 
         it('areaCode and areaData.areacode need to match.', function() {
             expect(lib.setArea('a', testArea)).to.equal(false);
+        });
+
+        it('Create data for area with undefined size and verify size = 0', function(done) {
+            var test3Key = codeutil.buildCode(constants.AREAS_KEY, testArea3.areacode);
+            lib.setArea(testArea3.areacode, testArea3);
+
+            assert(client.hmget(test3Key, 'size', function(err, res) {
+                expect(res).to.have.length(1);
+                expect(parseInt(res[0], 10)).to.equal(0);
+                done();
+            }));
         });
     });
 
