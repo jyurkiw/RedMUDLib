@@ -77,9 +77,6 @@ describe('The area-lib async module', function() {
 
         it('areaCode and areaData.areacode need to match.', function() {
             return lib.createAreaAsync('a', koboldValleyArea)
-                .then(function(success) {
-                    expect(success).to.equal(false);
-                })
                 .catch(function(err, msg) {
                     expect(err).to.be.a('string');
                     expect(err).to.equal(constants.errors.CREATE_AREACODE_NO_EXIST_IN_PAYLOAD);
@@ -115,9 +112,6 @@ describe('The area-lib async module', function() {
                 .then(function(res) {
                     expect(res).to.have.length(areaList.length);
                     expect(res.sort()).to.deep.equal(areaList);
-                })
-                .catch(function(err) {
-                    assert.fail(0, 1, err);
                 });
         });
     });
@@ -131,9 +125,6 @@ describe('The area-lib async module', function() {
             return lib.getAreaAsync(koboldValleyArea.areacode)
                 .then(function(area) {
                     expect(area).to.deep.equal(koboldValleyArea);
-                })
-                .catch(function(err) {
-                    assert.fail(0, 1, err);
                 });
         });
         it('Read data for area with size > 0 and verify size', function() {
@@ -145,9 +136,6 @@ describe('The area-lib async module', function() {
                         expect(area).to.be.a('object');
                         should.exist(area.size);
                         expect(area.size).to.equal(5);
-                    })
-                    .catch(function(err) {
-                        assert.fail(0, 1, err);
                     });
             });
         });
