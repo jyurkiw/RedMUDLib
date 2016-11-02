@@ -43,13 +43,13 @@ var testAreaUpdated = {
 };
 
 var hashKey = codeutil.buildCode(constants.AREAS_KEY, testArea.areacode);
-
+/*
 // Tests
 describe('The area-lib module', function() {
     // Setup
     beforeEach(function(done) {
         client.flushall();
-        lib.setArea(testArea.areacode, testArea);
+        lib.createArea(testArea.areacode, testArea);
         done();
     });
 
@@ -61,7 +61,7 @@ describe('The area-lib module', function() {
     // C
     describe('Create a new area', function() {
         it('Checks setting of both data pieces', function(done) {
-            lib.setArea(testArea2.areacode, testArea2);
+            lib.createArea(testArea2.areacode, testArea2);
 
             assert(client.sismember(constants.AREAS_KEY, testArea2.areacode, function(err, res) {
                 expect(res).to.equal(1);
@@ -77,12 +77,12 @@ describe('The area-lib module', function() {
         });
 
         it('areaCode and areaData.areacode need to match.', function() {
-            expect(lib.setArea('a', testArea)).to.equal(false);
+            expect(lib.createArea('a', testArea)).to.equal(false);
         });
 
         it('Create data for area with undefined size and verify size = 0', function(done) {
             var test3Key = codeutil.buildCode(constants.AREAS_KEY, testArea3.areacode);
-            lib.setArea(testArea3.areacode, testArea3);
+            lib.createArea(testArea3.areacode, testArea3);
 
             assert(client.hmget(test3Key, 'size', function(err, res) {
                 expect(res).to.have.length(1);
@@ -148,12 +148,26 @@ describe('The area-lib module', function() {
     // U
     describe('Update one area', function() {
         it('Update data for one area.', function(done) {
-            lib.setArea(testArea.areacode, testAreaUpdate);
-
-            lib.getArea(testArea.areacode, function(res) {
+            lib.setArea(testArea.areacode, testAreaUpdate, function(area) {
                 expect(res).to.deep.equal(testAreaUpdated);
                 done();
             });
+        });
+    });
+
+    describe('Attempt to update a non-existant area', function() {
+        it('Update area that does not exist.', function(done) {
+            var newArea = {
+                areacode: "XXX",
+                name: "Kobold Death Valley",
+                description: "A hot, dry valley filled with undead Kobolds."
+            };
+
+            lib.setArea(newArea.areacode, newArea, function(area, err) {
+                expect(err).to.not.equal(null);
+                expect(err).to.equal(constants.errors.UPDATE_AREACODE_NO_EXIST);
+            });
+
         });
     });
 
@@ -175,3 +189,4 @@ describe('The area-lib module', function() {
         });
     });
 });
+*/

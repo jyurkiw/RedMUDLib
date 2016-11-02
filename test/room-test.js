@@ -57,7 +57,7 @@ var westernOverlookUpdated = {
     name: 'Western Overlook',
     description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do. A hole in the western rockface opens into a dark cave that reeks of Goblin.'
 };
-
+/*
 // Tests
 describe('The room-lib module', function() {
     // Setup
@@ -237,3 +237,4 @@ describe('The room-lib module', function() {
         });
     });
 });
+*/
