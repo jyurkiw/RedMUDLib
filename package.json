@@ -1,6 +1,6 @@
 {
     "name": "redmudlib",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A MUD Redis-access library written in NodeJS.",
     "main": "mud-lib.js",
     "repository": {
@@ -8,7 +8,7 @@
         "url": "https://github.com/jyurkiw/RedMUDLib.git"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha --reporter spec",
+        "test": "./node_modules/.bin/mocha --trace-warnings --reporter spec",
         "testc": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha",
         "jsdoc": "./node_modules/.bin/jsdoc ./mud-lib.js ./lib -r --readme ./README.md -d docs",
         "wiki": "./node_modules/.bin/jsdoc2md mud-lib.js lib/*/*.js > api.md"

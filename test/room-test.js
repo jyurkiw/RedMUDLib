@@ -63,13 +63,14 @@ describe('The room-lib module', function() {
     // Setup
     beforeEach(function(done) {
         client.flushall();
-        lib.setArea(koboldValleyArea.areacode, koboldValleyArea);
-        lib.setArea(goblinValleyArea.areacode, goblinValleyArea);
-
-        lib.reserveRoomNumber(koboldValleyArea.areacode, function(roomNumber) {
-            westernOverlook.roomnumber = roomNumber;
-            lib.setRoom(koboldValleyArea.areacode, roomNumber, westernOverlook);
-            done();
+        lib.createArea(koboldValleyArea.areacode, koboldValleyArea, function() {
+            lib.createArea(goblinValleyArea.areacode, goblinValleyArea, function() {
+                lib.reserveRoomNumber(koboldValleyArea.areacode, function(roomNumber) {
+                    westernOverlook.roomnumber = roomNumber;
+                    lib.setRoom(koboldValleyArea.areacode, roomNumber, westernOverlook);
+                    done();
+                });
+            });
         });
     });
 
