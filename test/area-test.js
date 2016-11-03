@@ -43,13 +43,12 @@ var testAreaUpdated = {
 };
 
 var hashKey = codeutil.buildCode(constants.AREAS_KEY, testArea.areacode);
-/*
+
 // Tests
 describe('The area-lib module', function() {
     // Setup
     beforeEach(function(done) {
         client.flushall();
-        lib.createArea(testArea.areacode, testArea);
         done();
     });
 
@@ -60,41 +59,53 @@ describe('The area-lib module', function() {
 
     // C
     describe('Create a new area', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         it('Checks setting of both data pieces', function(done) {
-            lib.createArea(testArea2.areacode, testArea2);
-
-            assert(client.sismember(constants.AREAS_KEY, testArea2.areacode, function(err, res) {
-                expect(res).to.equal(1);
-                done();
-            }));
-
-            assert(client.hmget(hashKey, 'areacode', function(err, res) {
-                expect(res).to.be.a('object');
-                expect(res).to.have.length(1);
-                expect(res).to.equal(testArea.areacode);
-                done();
-            }));
+            lib.createArea(testArea2.areacode, testArea2, function(success) {
+                client.multi()
+                    .sismember(constants.AREAS_KEY, testArea2.areacode)
+                    .hmget(hashKey, 'areacode')
+                    .exec(function(err, res) {
+                        expect(res[0]).to.equal(1);
+                        expect(res[1]).to.be.a('Array');
+                        expect(res[1]).to.have.length(1);
+                        expect(res[1]).to.deep.equal([testArea.areacode]);
+                        done();
+                    });
+            });
         });
 
         it('areaCode and areaData.areacode need to match.', function() {
-            expect(lib.createArea('a', testArea)).to.equal(false);
+            lib.createArea('a', testArea, function(success) {
+                expect(success).to.equal(false);
+            });
         });
 
         it('Create data for area with undefined size and verify size = 0', function(done) {
             var test3Key = codeutil.buildCode(constants.AREAS_KEY, testArea3.areacode);
-            lib.createArea(testArea3.areacode, testArea3);
-
-            assert(client.hmget(test3Key, 'size', function(err, res) {
-                expect(res).to.have.length(1);
-                expect(parseInt(res[0], 10)).to.equal(0);
-                done();
-            }));
+            lib.createArea(testArea3.areacode, testArea3, function(success) {
+                client.hmget(test3Key, 'size', function(err, res) {
+                    expect(res).to.have.length(1);
+                    expect(parseInt(res[0], 10)).to.equal(0);
+                    done();
+                });
+            });
         });
     });
 
     // R
     describe('Read area list', function() {
-        lib.setArea(testArea2.areacode, testArea2);
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         var areaArray = [testArea.areacode];
 
         it('Retrieve list of all areas', function(done) {
@@ -109,6 +120,12 @@ describe('The area-lib module', function() {
     });
 
     describe('Read one area', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         var areaKey = codeutil.buildAreaCode(testArea.areacode);
         it('Read data for one area', function(done) {
             lib.getArea(areaKey, function(res) {
@@ -130,6 +147,12 @@ describe('The area-lib module', function() {
     });
 
     describe('Check area exists', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         it('Area does exist.', function(done) {
             lib.areaExists(testArea.areacode, function(exists) {
                 assert(exists);
@@ -147,15 +170,27 @@ describe('The area-lib module', function() {
 
     // U
     describe('Update one area', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         it('Update data for one area.', function(done) {
             lib.setArea(testArea.areacode, testAreaUpdate, function(area) {
-                expect(res).to.deep.equal(testAreaUpdated);
+                expect(area).to.deep.equal(testAreaUpdated);
                 done();
             });
         });
     });
 
     describe('Attempt to update a non-existant area', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         it('Update area that does not exist.', function(done) {
             var newArea = {
                 areacode: "XXX",
@@ -163,9 +198,10 @@ describe('The area-lib module', function() {
                 description: "A hot, dry valley filled with undead Kobolds."
             };
 
-            lib.setArea(newArea.areacode, newArea, function(area, err) {
+            lib.setArea(newArea.areacode, newArea, function(err) {
                 expect(err).to.not.equal(null);
                 expect(err).to.equal(constants.errors.UPDATE_AREACODE_NO_EXIST);
+                done();
             });
 
         });
@@ -173,6 +209,12 @@ describe('The area-lib module', function() {
 
     // D
     describe('Delete an existing area', function() {
+        beforeEach(function(done) {
+            lib.createArea(testArea.areacode, testArea, function() {
+                done();
+            });
+        });
+
         it('Checks delete of both data pieces', function(done) {
             lib.deleteArea(testArea.areacode);
 
@@ -189,4 +231,3 @@ describe('The area-lib module', function() {
         });
     });
 });
-*/

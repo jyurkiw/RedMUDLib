@@ -57,19 +57,20 @@ var westernOverlookUpdated = {
     name: 'Western Overlook',
     description: 'A short cliff overlooks a small, fertile valley. You can see scores of Kobolds milling about doing whatever it is Kobolds do. A hole in the western rockface opens into a dark cave that reeks of Goblin.'
 };
-/*
+
 // Tests
 describe('The room-lib module', function() {
     // Setup
     beforeEach(function(done) {
         client.flushall();
-        lib.setArea(koboldValleyArea.areacode, koboldValleyArea);
-        lib.setArea(goblinValleyArea.areacode, goblinValleyArea);
-
-        lib.reserveRoomNumber(koboldValleyArea.areacode, function(roomNumber) {
-            westernOverlook.roomnumber = roomNumber;
-            lib.setRoom(koboldValleyArea.areacode, roomNumber, westernOverlook);
-            done();
+        lib.createArea(koboldValleyArea.areacode, koboldValleyArea, function() {
+            lib.createArea(goblinValleyArea.areacode, goblinValleyArea, function() {
+                lib.reserveRoomNumber(koboldValleyArea.areacode, function(roomNumber) {
+                    westernOverlook.roomnumber = roomNumber;
+                    lib.setRoom(koboldValleyArea.areacode, roomNumber, westernOverlook);
+                    done();
+                });
+            });
         });
     });
 
@@ -237,4 +238,3 @@ describe('The room-lib module', function() {
         });
     });
 });
-*/
