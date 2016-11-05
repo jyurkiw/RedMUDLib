@@ -207,6 +207,32 @@ describe('The area-lib module', function() {
         });
     });
 
+    describe('Argument mangling', function() {
+        beforeEach(function(done) {
+            lib.area.createArea(koboldValleyArea.areacode, koboldValleyArea, function() {
+                done();
+            });
+        });
+
+        it('Check callback for argument mangling.', function(done) {
+            var areaUpdate = Object.assign({}, koboldValleyArea);
+
+            lib.area.setArea(koboldValleyArea.areacode, areaUpdate, function(err) {
+                expect(areaUpdate).to.deep.equal(koboldValleyArea);
+                done();
+            });
+        });
+
+        it('Check async promise for argument mangling.', function() {
+            var areaUpdate = Object.assign({}, koboldValleyArea);
+
+            return lib.area.async.setArea(koboldValleyArea.areacode, areaUpdate)
+                .then(function(status) {
+                    expect(areaUpdate).to.deep.equal(koboldValleyArea);
+                });
+        });
+    });
+
     // D
     describe('Delete an existing area', function() {
         beforeEach(function(done) {
