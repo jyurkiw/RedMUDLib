@@ -204,7 +204,7 @@ describe('The room-lib module', function() {
                         done();
                     });
                 });
-            })
+            });
         });
     });
 

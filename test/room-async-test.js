@@ -76,7 +76,7 @@ describe('The room-lib async module', function() {
     });
 
     after(function() {
-        return client.flushallAsync();
+        //return client.flushallAsync();
     });
 
     // C
@@ -155,6 +155,42 @@ describe('The room-lib async module', function() {
                             expect(room).to.deep.equal(westernOverlookUpdated);
                         });
                 });
+        });
+
+        describe('Connect the western overlook...', function() {
+            beforeEach(function() {
+                return lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+            });
+
+            it('...to the goblin cave entrance', function() {
+                var wolExit = {
+                    source: westernOverlook,
+                    command: 'west'
+                };
+
+                var gcvExit = {
+                    source: goblinCaveEntrance,
+                    command: 'east'
+                };
+
+                return lib.room.async.connectRooms(wolExit, gcvExit)
+                    .then(function() {
+                        var wolCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                        var wolECode = codeutil.convertRoomToExitsCode(wolCode);
+                        var gcvCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+                        var gcvECode = codeutil.convertRoomToExitsCode(gcvCode);
+
+                        return client.hgetAsync(wolECode, wolExit.command)
+                            .then(function(wres) {
+                                expect(wres).to.equal(gcvCode);
+
+                                return client.hgetAsync(gcvECode, gcvExit.command)
+                                    .then(function(gres) {
+                                        expect(gres).to.equal(wolCode);
+                                    });
+                            });
+                    });
+            });
         });
 
         it('Check for update argument mangling', function() {
