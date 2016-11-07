@@ -65,13 +65,13 @@ var westernOverlookUpdated = {
 };
 
 // Tests
-describe('The room-lib module', function() {
+describe('The room-lib async module', function() {
     // Setup
     beforeEach(function() {
         return Promise.all([
             client.flushallAsync(),
-            lib.areas.async.createArea(koboldValleyArea.areacode, koboldValleyArea),
-            lib.areas.async.createArea(goblinValleyArea.areacode, goblinValleyArea)
+            lib.area.async.createArea(koboldValleyArea.areacode, koboldValleyArea),
+            lib.area.async.createArea(goblinValleyArea.areacode, goblinValleyArea)
         ]);
     });
 
@@ -82,61 +82,123 @@ describe('The room-lib module', function() {
     // C
     describe('Create a new room without exits', function() {
         it('Create goblin cave entrance', function() {
-            return lib.area.async.createRoom(goblinCaveEntrance.areacode, goblinCaveEntrance)
-                .then(function() {
+            return lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance)
+                .then(function(roomNumber) {
                     return client.hgetallAsync(codeutil.buildRoomCode(goblinCaveEntrance.areacode, roomNumber))
                         .then(function(room) {
-                            if (typeof(res.roomnumber) === 'string') {
-                                res.roomnumber = parseInt(res.roomnumber, 10);
+                            if (typeof(room.roomnumber) === 'string') {
+                                room.roomnumber = parseInt(room.roomnumber, 10);
                             }
-                            expect(res).to.deep.equal(goblinCaveEntrance);
+                            expect(room).to.deep.equal(goblinCaveEntrance);
                         });
                 });
         });
 
-        it('Create goblin cave entrance through addRoom', function() {
-
+        it('Check addRoom for roomData argument mangling', function() {
+            var unmangledCaveEntrance = Object.assign({}, goblinCaveEntrance);
+            return lib.room.async.addRoom(unmangledCaveEntrance.areacode, unmangledCaveEntrance)
+                .then(function() {
+                    expect(unmangledCaveEntrance).to.deep.equal(goblinCaveEntrance);
+                });
         });
     });
 
     // R
     describe('Read rooms', function() {
-        it('Read the western overlook.', function() {
-
+        beforeEach(function() {
+            return lib.room.async.addRoom(westernOverlook.areacode, westernOverlook);
         });
 
-        it('Read the western overlook after joining it to the goblin cave entrance.', function() {
+        it('Read the western overlook.', function() {
+            return lib.room.async.getRoom(westernOverlook.areacode, 1)
+                .then(function(room) {
+                    expect(room).to.deep.equal(westernOverlook);
+                });
+        });
 
+        describe('Read the western overlook', function() {
+            before(function() {
+                return lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+            });
+
+            var exitDir = 'west';
+
+            it('after joining it to the goblin cave entrance.', function() {
+                return lib.room.async.setConnection(exitDir, westernOverlook, goblinCaveEntrance)
+                    .then(function() {
+                        var roomCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                        var roomExitsCode = codeutil.convertRoomToExitsCode(roomCode);
+                        var destinationCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+
+                        return lib.room.async.getRoom(westernOverlook.areacode, westernOverlook.roomnumber)
+                            .then(function(roomData) {
+                                should.exist(roomData.exits);
+                                expect(roomData.exits).to.be.a('object');
+                                expect(roomData.exits[exitDir]).to.equal(destinationCode);
+                            });
+                    });
+            });
         });
     });
 
     // U
     describe('Update room data', function() {
+        beforeEach(function() {
+            return lib.room.async.addRoom(westernOverlook.areacode, westernOverlook);
+        });
+
         it('Update the western overlook', function() {
-
-        });
-
-        it('Add an exit from western overlook to goblin cave entrance', function() {
-
-        });
-
-        it('Connect the western overlook to the goblin cave entrance', function() {
-
+            return lib.room.async.setRoom(westernOverlook.areacode, westernOverlook.roomnumber, westernOverlookUpdate)
+                .then(function() {
+                    return lib.room.async.getRoom(westernOverlook.areacode, westernOverlook.roomnumber)
+                        .then(function(room) {
+                            expect(room).to.deep.equal(westernOverlookUpdated);
+                        });
+                });
         });
 
         it('Check for update argument mangling', function() {
-
+            var unmangledWesternOverlookUpdate = Object.assign(westernOverlookUpdate);
+            return lib.room.async.setRoom(westernOverlook.areacode, westernOverlook.roomnumber, westernOverlookUpdate)
+                .then(function() {
+                    expect(westernOverlookUpdate).to.deep.equal(unmangledWesternOverlookUpdate);
+                });
         });
     });
 
     // D
     describe('Delete a room', function() {
-        it('Delete the western overlook and the kobold valley', function() {
-
+        beforeEach(function() {
+            return Promise.all([
+                lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance),
+                lib.room.async.addRoom(goblinCaveTunnel.areacode, goblinCaveTunnel)
+            ]);
         });
 
         it('Delete one out of two rooms in the goblin cave', function() {
+            // Sanity check the goblin cave size
+            return lib.area.async.getArea(goblinValleyArea.areacode)
+                .then(function(area) {
+                    expect(area.size).to.equal(2);
 
+                    // Delete the first room
+                    return lib.room.async.deleteRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber)
+                        .then(function() {
+                            return lib.area.async.getArea(goblinValleyArea.areacode)
+                                .then(function(area) {
+                                    expect(area.size).to.equal(1);
+
+                                    // Delete the second room
+                                    return lib.room.async.deleteRoom(goblinCaveTunnel.areacode, goblinCaveTunnel.roomnumber)
+                                        .then(function() {
+                                            return lib.area.async.getArea(goblinValleyArea.areacode)
+                                                .then(function(area) {
+                                                    expect(area.size).to.equal(0);
+                                                });
+                                        });
+                                });
+                        });
+                });
         });
     });
 });
