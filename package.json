@@ -1,6 +1,6 @@
 {
     "name": "redmudlib",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "A MUD Redis-access library written in NodeJS.",
     "main": "mud-lib.js",
     "repository": {
