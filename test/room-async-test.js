@@ -76,7 +76,7 @@ describe('The room-lib async module', function() {
     });
 
     after(function() {
-        //return client.flushallAsync();
+        return client.flushallAsync();
     });
 
     // C
