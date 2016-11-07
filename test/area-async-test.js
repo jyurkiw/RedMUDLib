@@ -3,13 +3,14 @@ var expect = chai.expect;
 var should = chai.should();
 var assert = require('assert');
 
-var redis = require('redis');
+//var redis = require('redis');
 var constants = require('../lib/constants');
 var codeutil = require('../lib/util/codeutil');
 
-var client = redis.createClient();
+var lib = require('../mud-lib')();
 
-var lib = require('../mud-lib')(client);
+//var client = redis.createClient();
+var client = lib.client.instance();
 
 var koboldValleyArea = {
     areacode: "KDV",
