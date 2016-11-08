@@ -15,7 +15,7 @@ var codeutil = require('../lib/util/codeutil');
 
 var client = redis.createClient();
 
-var lib = require('../mud-lib')(client);
+var lib = require('../mud-lib')();
 
 var koboldValleyArea = {
     areacode: 'KDV',
@@ -94,12 +94,28 @@ describe('The room-lib async module', function() {
                 });
         });
 
-        it('Check addRoom for roomData argument mangling', function() {
-            var unmangledCaveEntrance = Object.assign({}, goblinCaveEntrance);
-            return lib.room.async.addRoom(unmangledCaveEntrance.areacode, unmangledCaveEntrance)
-                .then(function() {
-                    expect(unmangledCaveEntrance).to.deep.equal(goblinCaveEntrance);
-                });
+        describe('Check addRoom for roomData argument mangling', function() {
+            it('create one room in an area', function() {
+                var unmangledCaveEntrance = Object.assign({}, goblinCaveEntrance);
+                return lib.room.async.addRoom(unmangledCaveEntrance.areacode, unmangledCaveEntrance)
+                    .then(function() {
+                        expect(unmangledCaveEntrance).to.deep.equal(goblinCaveEntrance);
+                    });
+            });
+
+            it('create two rooms in an area', function() {
+                var unmangledCaveEntrance = Object.assign({}, goblinCaveEntrance);
+                var unmangledCaveTunnel = Object.assign({}, goblinCaveTunnel);
+
+                return Promise.all([
+                        lib.room.async.addRoom(unmangledCaveEntrance.areacode, unmangledCaveEntrance),
+                        lib.room.async.addRoom(unmangledCaveTunnel.areacode, unmangledCaveTunnel)
+                    ])
+                    .then(function() {
+                        expect(unmangledCaveEntrance).to.deep.equal(goblinCaveEntrance);
+                        expect(unmangledCaveTunnel).to.deep.equal(goblinCaveTunnel);
+                    });
+            });
         });
     });
 
