@@ -253,4 +253,77 @@ describe('The room-lib async module', function() {
                 });
         });
     });
+
+    describe('Delete an exit', function() {
+        var gcvWRoom = {
+            source: goblinCaveTunnel,
+            command: 'east'
+        };
+
+        var gcvERoom = {
+            source: goblinCaveEntrance,
+            command: 'west'
+        };
+
+        beforeEach(function() {
+            return Promise.all([
+                    lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance),
+                    lib.room.async.addRoom(goblinCaveTunnel.areacode, goblinCaveTunnel)
+                ])
+                .then(function() {
+                    return lib.room.async.connectRooms(gcvWRoom, gcvERoom);
+                });
+        });
+
+        it('Remove an exit from the western overlook to the cave entrance', function() {
+            return lib.room.async.getRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber)
+                .then(function(room) {
+                    expect(room.exits).to.be.a('object');
+                    expect(room.exits[gcvERoom.command]).to.be.a('string');
+
+                    return lib.room.async.unsetConnection(gcvERoom.command, gcvERoom.source)
+                        .then(function() {
+                            return lib.room.async.getRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber)
+                                .then(function(room) {
+                                    should.not.exist(room.exits);
+                                });
+                        });
+                });
+        });
+
+        describe('...multiple exits', function() {
+            it('Remove all connections from the western overlook to the cave entrance', function() {
+                return Promise.all([
+                        lib.room.async.getRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber),
+                        lib.room.async.getRoom(goblinCaveTunnel.areacode, goblinCaveTunnel.roomnumber)
+                    ])
+                    .then(function(rooms) {
+                        expect(rooms).to.be.an('Array');
+                        expect(rooms.length).to.equal(2);
+
+                        var entrance = rooms[0];
+                        var tunnel = rooms[1];
+
+                        return lib.room.async.disconnectRooms(entrance, tunnel)
+                            .then(function() {
+                                return Promise.all([
+                                        lib.room.async.getRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber),
+                                        lib.room.async.getRoom(goblinCaveTunnel.areacode, goblinCaveTunnel.roomnumber)
+                                    ])
+                                    .then(function(rooms) {
+                                        expect(rooms).to.be.an('Array');
+                                        expect(rooms.length).to.equal(2);
+
+                                        entrance = rooms[0];
+                                        tunnel = rooms[1];
+
+                                        should.not.exist(entrance.exits);
+                                        should.not.exist(tunnel.exits);
+                                    });
+                            });
+                    });
+            });
+        });
+
+    });
 });
