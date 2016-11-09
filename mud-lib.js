@@ -30,6 +30,10 @@ function MUDLib() {
 
     mudLib.client = { instance: function getInstance() { return client; } };
 
+    // TODO: Refactor this out and add codeutil to the lib in the standard lib method.
+    // TODO: Refactor all areas of the lib that use a local codeutil to use the lib.util object.
+    mudLib.util = require('./lib/util/codeutil');
+
     return mudLib;
 }
 
