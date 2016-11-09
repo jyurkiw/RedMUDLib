@@ -117,6 +117,42 @@ describe('The room-lib async module', function() {
                     });
             });
         });
+
+        describe('Connect the western overlook...', function() {
+            beforeEach(function() {
+                return lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
+            });
+
+            it('...to the goblin cave entrance', function() {
+                var wolExit = {
+                    source: westernOverlook,
+                    command: 'west'
+                };
+
+                var gcvExit = {
+                    source: goblinCaveEntrance,
+                    command: 'east'
+                };
+
+                return lib.room.async.connectRooms(wolExit, gcvExit)
+                    .then(function() {
+                        var wolCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
+                        var wolECode = codeutil.convertRoomToExitsCode(wolCode);
+                        var gcvCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
+                        var gcvECode = codeutil.convertRoomToExitsCode(gcvCode);
+
+                        return client.hgetAsync(wolECode, wolExit.command)
+                            .then(function(wres) {
+                                expect(wres).to.equal(gcvCode);
+
+                                return client.hgetAsync(gcvECode, gcvExit.command)
+                                    .then(function(gres) {
+                                        expect(gres).to.equal(wolCode);
+                                    });
+                            });
+                    });
+            });
+        });
     });
 
     // R
@@ -155,6 +191,62 @@ describe('The room-lib async module', function() {
                     });
             });
         });
+
+        describe('Read room with exits', function() {
+            beforeEach(function() {
+                return Promise.all([
+                        lib.room.async.addRoom(westernOverlook.areacode, westernOverlook),
+                        lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance)
+                    ])
+                    .then(function() {
+                        return lib.room.async.setConnection('west', westernOverlook, goblinCaveEntrance);
+                    });
+            });
+
+            it('Western overlook after it has been connected to the goblin cave', function() {
+                return lib.room.async.getRoom(westernOverlook.areacode, westernOverlook.roomnumber)
+                    .then(function(room) {
+                        should.exist(room.exits);
+                        expect(room.exits).to.be.an('object');
+                        expect(room.exits.west).to.equal('RM:' + goblinCaveEntrance.areacode + ':' + goblinCaveEntrance.roomnumber);
+                    });
+            });
+        });
+
+        describe('Read connected rooms', function() {
+            beforeEach(function() {
+                return Promise.all([
+                        lib.room.async.addRoom(westernOverlook.areacode, westernOverlook),
+                        lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance)
+                    ])
+                    .then(function() {
+                        return lib.room.async.connectRooms({ command: 'west', source: westernOverlook }, { command: 'east', source: goblinCaveEntrance });
+                    });
+            });
+
+            it('Read western overlook and cave entrance after they have been connected to each other', function() {
+                return Promise.all([
+                        lib.room.async.getRoom(westernOverlook.areacode, westernOverlook.roomnumber),
+                        lib.room.async.getRoom(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber)
+                    ])
+                    .then(function(rooms) {
+                        expect(rooms).to.be.an('array');
+                        expect(rooms.length).to.equal(2);
+                        expect(rooms[0].areacode).to.equal(westernOverlook.areacode);
+
+                        var overlook = rooms[0];
+                        var entrance = rooms[1];
+
+                        should.exist(overlook.exits);
+                        expect(overlook.exits.west).to.be.an('string');
+                        expect(overlook.exits.west).to.equal('RM:' + goblinCaveEntrance.areacode + ':' + goblinCaveEntrance.roomnumber);
+
+                        should.exist(entrance.exits);
+                        expect(entrance.exits.east).to.be.an('string');
+                        expect(entrance.exits.east).to.equal('RM:' + westernOverlook.areacode + ':' + westernOverlook.roomnumber);
+                    });
+            });
+        });
     });
 
     // U
@@ -171,42 +263,6 @@ describe('The room-lib async module', function() {
                             expect(room).to.deep.equal(westernOverlookUpdated);
                         });
                 });
-        });
-
-        describe('Connect the western overlook...', function() {
-            beforeEach(function() {
-                return lib.room.async.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
-            });
-
-            it('...to the goblin cave entrance', function() {
-                var wolExit = {
-                    source: westernOverlook,
-                    command: 'west'
-                };
-
-                var gcvExit = {
-                    source: goblinCaveEntrance,
-                    command: 'east'
-                };
-
-                return lib.room.async.connectRooms(wolExit, gcvExit)
-                    .then(function() {
-                        var wolCode = codeutil.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber);
-                        var wolECode = codeutil.convertRoomToExitsCode(wolCode);
-                        var gcvCode = codeutil.buildRoomCode(goblinCaveEntrance.areacode, goblinCaveEntrance.roomnumber);
-                        var gcvECode = codeutil.convertRoomToExitsCode(gcvCode);
-
-                        return client.hgetAsync(wolECode, wolExit.command)
-                            .then(function(wres) {
-                                expect(wres).to.equal(gcvCode);
-
-                                return client.hgetAsync(gcvECode, gcvExit.command)
-                                    .then(function(gres) {
-                                        expect(gres).to.equal(wolCode);
-                                    });
-                            });
-                    });
-            });
         });
 
         it('Check for update argument mangling', function() {
