@@ -95,6 +95,19 @@ describe('The area-lib async module', function() {
                     }));
                 });
         });
+
+        it('Create area when size > 0 should set size to 0', function() {
+            var koboldValleyAreaSize5 = Object.assign({}, koboldValleyArea);
+            koboldValleyAreaSize5.size = 5;
+            return lib.area.async.createArea(koboldValleyAreaSize5.areacode, koboldValleyAreaSize5)
+                .then(function(success) {
+                    expect(success).to.equal(true);
+                    return client.hmgetAsync('AREAS:' + koboldValleyAreaSize5.areacode, 'size')
+                        .then(function(size) {
+                            parseInt(size, 10).should.equal(0);
+                        });
+                });
+        });
     });
 
     // R

@@ -96,6 +96,19 @@ describe('The area-lib module', function() {
                 });
             });
         });
+
+        it('Create data for area with size > 0. Size should be 0.', function(done) {
+            var koboldValleyAreaSize5 = Object.assign({}, koboldValleyArea);
+            koboldValleyAreaSize5.size = 5;
+
+            lib.area.createArea(koboldValleyAreaSize5.areacode, koboldValleyAreaSize5, function(success) {
+                client.hmget('AREAS:' + koboldValleyAreaSize5.areacode, 'size', function(err, res) {
+                    expect(res).to.have.length(1);
+                    parseInt(res, 10).should.equal(0);
+                    done();
+                });
+            });
+        });
     });
 
     // R
