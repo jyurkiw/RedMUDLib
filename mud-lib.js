@@ -17,6 +17,7 @@ function MUDLib() {
     var libs = [];
     libs.push(require('./lib/area/area-lib')(client));
     libs.push(require('./lib/room/room-lib')(client));
+    libs.push(require('./lib/room/room-admin-lib')(client));
 
     var mudLib = {};
 
