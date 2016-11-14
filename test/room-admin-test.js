@@ -45,7 +45,7 @@ var goblinCaveTunnel = {
 };
 
 describe('Admin functionality APIs', function() {
-    beforeEach(function() {
+    before(function() {
         return Promise.all([
                 lib.area.async.createArea(koboldValleyArea.areacode, koboldValleyArea),
                 lib.area.async.createArea(goblinValleyArea.areacode, goblinValleyArea)
@@ -59,13 +59,35 @@ describe('Admin functionality APIs', function() {
             });
     });
 
-    it('Get room names and codes by area', function() {
+    after(function() {
+        return client.flushallAsync();
+    });
+
+    it('Get room names and codes for an area', function() {
         var roomDataExpect = {
             'RM:GCV:1': goblinCaveEntrance.name,
             'RM:GCV:2': goblinCaveTunnel.name
         };
 
         return lib.admin.room.async.getRoomLookupTableByArea(goblinCaveEntrance.areacode)
+            .then(function(roomData) {
+                expect(roomData).to.be.an('object');
+                expect(roomData).to.deep.equal(roomDataExpect);
+            });
+    });
+
+    it('Get room names and codes for all areas', function() {
+        var roomDataExpect = {
+            'KDV': {
+                'RM:KDV:1': westernOverlook.name
+            },
+            'GCV': {
+                'RM:GCV:1': goblinCaveEntrance.name,
+                'RM:GCV:2': goblinCaveTunnel.name
+            }
+        };
+
+        return lib.admin.room.async.getAllRoomsLookupTable()
             .then(function(roomData) {
                 expect(roomData).to.be.an('object');
                 expect(roomData).to.deep.equal(roomDataExpect);
