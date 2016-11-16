@@ -65,8 +65,8 @@ describe('Admin functionality APIs', function() {
 
     it('Get room names and codes for an area', function() {
         var roomDataExpect = {
-            'RM:GCV:1': goblinCaveEntrance.name,
-            'RM:GCV:2': goblinCaveTunnel.name
+            'RM:GCV:1': goblinCaveEntrance.roomnumber + ': ' + goblinCaveEntrance.name,
+            'RM:GCV:2': goblinCaveTunnel.roomnumber + ': ' + goblinCaveTunnel.name
         };
 
         return lib.admin.room.async.getRoomLookupTableByArea(goblinCaveEntrance.areacode)
@@ -79,11 +79,11 @@ describe('Admin functionality APIs', function() {
     it('Get room names and codes for all areas', function() {
         var roomDataExpect = {
             'KDV': {
-                'RM:KDV:1': westernOverlook.name
+                'RM:KDV:1': westernOverlook.roomnumber + ': ' + westernOverlook.name
             },
             'GCV': {
-                'RM:GCV:1': goblinCaveEntrance.name,
-                'RM:GCV:2': goblinCaveTunnel.name
+                'RM:GCV:1': goblinCaveEntrance.roomnumber + ': ' + goblinCaveEntrance.name,
+                'RM:GCV:2': goblinCaveTunnel.roomnumber + ': ' + goblinCaveTunnel.name
             }
         };
 
