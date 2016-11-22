@@ -26,8 +26,15 @@ describe('User Admin functionality APIs', function() {
 
     it('Check PW Hash for testUser1', function() {
         return lib.admin.user.async.checkPassword(username, pwhash)
-        .then(function(success) {
-            expect(success).to.equal(true);
-        });
+            .then(function(success) {
+                expect(success).to.equal(true);
+            });
+    });
+
+    it('Check Incorrect PW Hash for failure', function() {
+        return lib.admin.user.async.checkPassword(username, '23456')
+            .catch(function(err) {
+                expect(err).to.equal(constants.errors.USER_PASSWORD_NO_MATCH);
+            });
     });
 });
