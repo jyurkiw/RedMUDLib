@@ -44,7 +44,7 @@ var goblinCaveTunnel = {
     description: 'The cave stretches on into the darkness.'
 };
 
-describe('Admin functionality APIs', function() {
+describe('Room Admin functionality APIs', function() {
     before(function() {
         return Promise.all([
                 lib.area.async.createArea(koboldValleyArea.areacode, koboldValleyArea),
