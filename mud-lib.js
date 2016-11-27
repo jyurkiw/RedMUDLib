@@ -18,6 +18,8 @@ function MUDLib() {
     libs.push(require('./lib/area/area-lib')(client));
     libs.push(require('./lib/room/room-lib')(client));
     libs.push(require('./lib/room/room-admin-lib')(client));
+    libs.push(require('./lib/user/user-lib')(client));
+    libs.push(require('./lib/character/character-lib')(client));
 
     var mudLib = {};
 
