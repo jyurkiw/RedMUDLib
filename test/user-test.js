@@ -12,7 +12,33 @@ var client = lib.client.instance();
 var username = 'testUser1';
 var pwhash = '12345';
 
+var username2 = 'testUser2';
+var pwhash2 = '23456';
+
+
 describe('User Admin functionality APIs', function() {
+    after(function() {
+        return client.flushallAsync();
+    });
+
+    describe('Get users', function() {
+        beforeEach(function() {
+            return Promise.all([
+                lib.user.async.createUser(username, pwhash),
+                lib.user.async.createUser(username2, pwhash2)
+            ]);
+        });
+
+        it('Get 2 usernames', function() {
+            return lib.user.async.getUsers()
+                .then(function(users) {
+                    expect(users).to.be.an('array');
+                    expect(users).to.have.lengthOf(2);
+                    expect(users.sort()).to.deep.equal([username, username2].sort());
+                });
+        });
+    });
+
     describe('Create new user', function() {
         beforeEach(function() {
             return client.flushallAsync();
