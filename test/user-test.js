@@ -17,7 +17,11 @@ var pwhash2 = '23456';
 
 
 describe('User Admin functionality APIs', function() {
-    after(function() {
+    before(function() {
+        return client.flushallAsync();
+    });
+
+    afterEach(function() {
         return client.flushallAsync();
     });
 
@@ -39,15 +43,22 @@ describe('User Admin functionality APIs', function() {
         });
     });
 
-    describe('Create new user', function() {
+    describe('Get user', function() {
         beforeEach(function() {
-            return client.flushallAsync();
+            return lib.user.async.createUser(username, pwhash);
         });
 
-        afterEach(function() {
-            return client.flushallAsync();
+        it('Get a user', function() {
+            return lib.user.async.getUser(username)
+                .then(function(user) {
+                    user.should.be.an('object');
+                    expect(user.username).to.equal(username);
+                    expect(user.pwhash).to.equal(pwhash);
+                });
         });
+    });
 
+    describe('Create new user', function() {
         it('Create testUser1', function() {
             return lib.user.async.createUser(username, pwhash)
                 .then(function(success) {
@@ -113,14 +124,7 @@ describe('User Admin functionality APIs', function() {
 
     describe('Check user password', function() {
         beforeEach(function() {
-            return client.flushallAsync()
-                .then(function() {
-                    client.hmset(constants.USER_KEY + ':' + username, constants.USER_PASSWORD_HASH_KEY, pwhash);
-                });
-        });
-
-        afterEach(function() {
-            return client.flushallAsync();
+            return client.hmset(constants.USER_KEY + ':' + username, constants.USER_PASSWORD_HASH_KEY, pwhash);
         });
 
         it('Check PW Hash for testUser1', function() {
