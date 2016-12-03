@@ -18,6 +18,7 @@ var pwhash2 = '23456';
 var charactername1 = 'Alder';
 var charactername2 = 'Tenmir';
 var defaultroom = 'RM:KDV:1';
+var updateroom = 'RM:KDV:2';
 
 describe('Character functionality APIs', function() {
     describe('Define character for user', function() {
@@ -113,6 +114,24 @@ describe('Character functionality APIs', function() {
                         character.owner.should.equal(username);
                         should.exist(character.room);
                         character.room.should.equal(defaultroom);
+                    });
+            });
+        });
+
+        describe('Update character room', function() {
+            beforeEach(function() {
+                return lib.character.async.createCharacter(username, charactername1, defaultroom);
+            });
+
+            it('Update by code', function() {
+                return lib.character.async.updateCharacterRoom(charactername1, updateroom)
+                    .then(function() {
+                        lib.character.async.getCharacter(charactername1)
+                            .then(function(character) {
+                                should.exist(character);
+                                expect(character).to.be.an('object');
+                                expect(character.room).to.equal(updateroom);
+                            });
                     });
             });
         });
