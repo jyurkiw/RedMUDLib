@@ -118,6 +118,14 @@ describe('The room-lib module', function() {
             });
         });
 
+        it('Read western overlook by code', function() {
+            return lib.room.async.getRoomByCode(lib.util.buildRoomCode(westernOverlook.areacode, westernOverlook.roomnumber))
+                .then(function(room) {
+                    should.exist(room);
+                    room.should.deep.equal(westernOverlook);
+                });
+        });
+
         it('Read the western overlook after joining it to the goblin cave entrance.', function(done) {
             lib.room.addRoom(goblinCaveEntrance.areacode, goblinCaveEntrance);
 
